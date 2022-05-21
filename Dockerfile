@@ -1,17 +1,30 @@
-FROM penidentityplatform/openam
-
+FROM openidentityplatform/openam
+USER root
 ENV SSOADMINTOOLS_PATH /home/openam/ssoadmintools
 
 ENV CONFIGURATOR_TOOL_VERSION 14.6.4
 
-RUN apt install -y curl zip unzip && \
-mkdir ${SSOADMINTOOLS_PATH} && \
-curl https://github.com/OpenIdentityPlatform/OpenAM/releases/download/${CONFIGURATOR_TOOL_VERSION}/SSOAdminTools-${CONFIGURATOR_TOOL_VERSION}.zip --output ${SSOADMINTOOLS_PATH} && \
-unzip ${SSOADMINTOOLS_PATH}/SSOAdminTools-14.6.4.zip -d ${SSOADMINTOOLS_PATH}  && \
-chmod -R 777 ${SSOADMINTOOLS_PATH}
+ENV CONFIGURATOR_ZIP_PATH ${SSOADMINTOOLS_PATH}/SSOConfiguratorTools-${CONFIGURATOR_TOOL_VERSION}.zip
+
+WORKDIR ${SSOADMINTOOLS_PATH}
+
+RUN apt update && apt install -y curl zip unzip netcat
+
+RUN curl -L https://github.com/OpenIdentityPlatform/OpenAM/releases/download/${CONFIGURATOR_TOOL_VERSION}/SSOConfiguratorTools-${CONFIGURATOR_TOOL_VERSION}.zip -o ${CONFIGURATOR_ZIP_PATH}
+
+RUN unzip ${CONFIGURATOR_ZIP_PATH} -d ${SSOADMINTOOLS_PATH}  && \
+chmod -R 777 ${SSOADMINTOOLS_PATH} && \
+rm -f ${CONFIGURATOR_ZIP_PATH}
 
 ADD ./openamconfig ${SSOADMINTOOLS_PATH}/openamconfig
-RUN chmod 777 ${SSOADMINTOOLS_PATH}/openamconfig
+RUN chmod -R 777 ${SSOADMINTOOLS_PATH}/openamconfig
 
-#install config
-java -jar  ${SSOADMINTOOLS_PATH}/openam-configurator-tool-${CONFIGURATOR_TOOL_VERSION}.jar -f ${SSOADMINTOOLS_PATH}/openamconfig
+ADD ./configure.sh /configure.sh
+RUN chmod 777 /configure.sh
+
+ADD ./starter.sh /starter.sh
+RUN chmod 777 /starter.sh
+
+USER $OPENAM_USER
+
+CMD ["/bin/bash", "/starter.sh"]

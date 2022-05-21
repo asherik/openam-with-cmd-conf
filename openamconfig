@@ -1,6 +1,6 @@
-SERVER_URL=http://openam.mydomain.com:8082
+SERVER_URL=http://0.0.0.0:8080
 DEPLOYMENT_URI=/openam
-BASE_DIR=/openam
+BASE_DIR=/home/openam
 locale=ru_RU
 PLATFORM_LOCALE=ru_RU
 AM_ENC_KEY=
@@ -17,3 +17,4 @@ DIRECTORY_JMX_PORT=1689
 ROOT_SUFFIX=dc=openam,dc=openidentityplatform,dc=org
 DS_DIRMGRDN=cn=Directory Manager
 DS_DIRMGRPASSWD=11111111
+ACCEPT_LICENSES=true

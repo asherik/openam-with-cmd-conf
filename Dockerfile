@@ -21,10 +21,3 @@ RUN chmod -R 777 ${SSOADMINTOOLS_PATH}/openamconfig
 
 ADD ./configure.sh /configure.sh
 RUN chmod 777 /configure.sh
-
-ADD ./starter.sh /starter.sh
-RUN chmod 777 /starter.sh
-
-USER $OPENAM_USER
-
-CMD ["/bin/bash", "/starter.sh"]
